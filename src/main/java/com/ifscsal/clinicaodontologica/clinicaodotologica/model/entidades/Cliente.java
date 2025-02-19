@@ -12,13 +12,13 @@ public class Cliente {
     @Column (name = "id")
     private int id;
 
-    @Column (name = "nome")
+    @Column (name = "nome", length = 50)
     private String nome;
 
-    @Column (name = "email")
+    @Column (name = "email", unique = true, nullable = false, length = 200)
     private String email;
 
-    @Column (name = "senha")
+    @Column (name = "senha", length = 200)
     private String senha;
 
     // metodos
