@@ -28,6 +28,7 @@ public class Dentista{
     public Dentista(DentistaDTO dentistaDTO) {
         this.nome = dentistaDTO.nome();
         this.email = dentistaDTO.email();
+        this.especialidade = dentistaDTO.especialidade();
         this.senha = dentistaDTO.senha();
         this.CRO = dentistaDTO.CRO();
     }
