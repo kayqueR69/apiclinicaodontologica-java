@@ -12,6 +12,6 @@ spring.datasource.url = jdbc:mysql://seuhost:portaonderodaoseubanco/clinicaodont
 # - dialeto do banco de dados
 spring.jpa.properties.hibernate.dialect = org.hibernate.dialect.MySQL8Dialect
 
-# - Configuração que importante!
+# - Configuração importante!
 spring.jpa.hibernate.naming.physical-strategy=org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
 
