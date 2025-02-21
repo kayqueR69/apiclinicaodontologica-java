@@ -1,5 +1,6 @@
 package com.ifscsal.clinicaodontologica.clinicaodotologica.controller;
 
+import com.ifscsal.clinicaodontologica.clinicaodotologica.DTO.ConsultaDTO;
 import com.ifscsal.clinicaodontologica.clinicaodotologica.damain.dentista.Dentista;
 import com.ifscsal.clinicaodontologica.clinicaodotologica.damain.dentista.DentistaRepositery;
 import com.ifscsal.clinicaodontologica.clinicaodotologica.model.DAO.ICliente;
@@ -31,7 +32,6 @@ public class ConsultaController {
 
     @PostMapping ("/agendar")
     public ResponseEntity<?> agendarConsulta (@RequestBody Consulta consulta){
-        // work in progress : necessário de tratar o objeto consulta da resposta
 
         Cliente cliente =  daoCliente.findById(consulta.getCliente().getId()).get();
         consulta.setNomePaciente(cliente.getNome());
@@ -45,8 +45,10 @@ public class ConsultaController {
 
         Map<Object, Object> resposta = new HashMap<Object, Object>();
 
+        ConsultaDTO formatCons = new  ConsultaDTO();
+
         resposta.put("menssagem", "consulta agendada");
-        resposta.put("agendamento", novaConsulta);
+        resposta.put("agendamento", formatCons.formatConsulta(novaConsulta));
 
         return ResponseEntity.status(201).body(resposta);
 
