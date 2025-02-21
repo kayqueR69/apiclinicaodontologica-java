@@ -18,6 +18,18 @@ public class ConsultaDTO {
 
     public ConsultaDTO () {}
 
+    public ConsultaDTO (Consulta consulta) {
+        this.idConsulta = consulta.getIdConsulta();
+        this.idCliente = consulta.getCliente().getId();
+        this.idDentista = consulta.getDentista().getId();
+        this.dataConsulta = consulta.getDataConsulta();
+        this.motivo = consulta.getMotivo();
+        this.estado = consulta.getEstado();
+        this.nomePaciente = consulta.getNomePaciente();
+        this.emailPaciente = consulta.getEmailPaciente();
+        this.nomeDentista = consulta.getNomeDentista();
+    }
+
     public ConsultaDTO(int idConsulta, int idCliente, int idDentista, Date dataConsulta, String motivo, String estado, String nomePaciente, String emailPaciente, String nomeDentista) {
         this.idConsulta = idConsulta;
         this.idCliente = idCliente;
@@ -100,23 +112,6 @@ public class ConsultaDTO {
 
     public void setNomeDentista(String nomeDentista) {
         this.nomeDentista = nomeDentista;
-    }
-
-    // formatando objeto consulta para saida
-    public ConsultaDTO formatConsulta (Consulta consulta) {
-
-        return new ConsultaDTO(
-                consulta.getIdConsulta(),
-                consulta.getCliente().getId(),
-                consulta.getDentista().getId(),
-                consulta.getDataConsulta(),
-                consulta.getMotivo(),
-                consulta.getEstado(),
-                consulta.getNomePaciente(),
-                consulta.getEmailPaciente(),
-                consulta.getNomeDentista()
-        );
-
     }
 
 }
