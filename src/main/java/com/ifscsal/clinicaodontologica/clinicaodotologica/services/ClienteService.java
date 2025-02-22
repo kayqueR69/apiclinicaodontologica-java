@@ -44,7 +44,7 @@ public class ClienteService implements Observable {
         for (int c = 0; c < consultas.size(); c++) {
             if (acao.equals("alterar")) {
                 consultaService.update(cliente, consultas.get(c));
-            } else if (acao.equals("desmarcar")) {
+            } else if (acao.equals("cancelar")) {
                 consultaService.desmarcar(consultas.get(c));
             }
         }
@@ -90,6 +90,18 @@ public class ClienteService implements Observable {
         notificarObservers("alterar", clienteRegistro);
 
         return clienteSaida;
+
+    }
+
+    public Cliente deletar (int id) {
+
+        Cliente clienteDeletado = dao.findById(id).get();
+
+        dao.delete(clienteDeletado);
+
+        notificarObservers("cancelar", clienteDeletado);
+
+        return clienteDeletado;
 
     }
 

@@ -64,4 +64,16 @@ public class ClienteController {
 
         return ResponseEntity.status(200).body(resposta);
     }
+
+    @DeleteMapping ("/cliente/deletar/{id}")
+    public ResponseEntity<?> deletarCliente (@PathVariable int id) {
+        Cliente clienteDelete = clienteService.deletar(id);
+
+        Map <String, Object> resposta = new HashMap<>();
+
+        resposta.put("menssagem", "cliente deletado");
+        resposta.put("cliente", clienteDelete);
+
+        return ResponseEntity.status(204).body(resposta);
+    }
 }

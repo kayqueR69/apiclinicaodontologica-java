@@ -91,7 +91,7 @@ public class ConsultaController {
         resposta.put("menssagem", "consulta deletada");
         resposta.put("consulta", consultaSaida);
 
-        return ResponseEntity.status(200).body(resposta);
+        return ResponseEntity.status(204).body(resposta);
     }
 
 }
