@@ -54,7 +54,7 @@ public class ClienteController {
     @PutMapping ("/alterar")
     public ResponseEntity<?> alterarCliente (@RequestBody Cliente cliente) {
 
-        if (cliente.getId() == 0) { // validação para o caso onde não seja passado o id no parâmetro da requisição
+        if (cliente.getId() == 0) { // validação para o caso onde não seja passado o id no body da requisição
             Map<String, Object> resposta = new HashMap<>();
             resposta.put("Menssagem", "Conflito de dados");
             return ResponseEntity.status(409).body(resposta);

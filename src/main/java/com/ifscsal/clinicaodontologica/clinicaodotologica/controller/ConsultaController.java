@@ -1,6 +1,7 @@
 package com.ifscsal.clinicaodontologica.clinicaodotologica.controller;
 
 import com.ifscsal.clinicaodontologica.clinicaodotologica.DTO.ConsultaDTO;
+import com.ifscsal.clinicaodontologica.clinicaodotologica.DTO.ConsultaUpdateDTO;
 import com.ifscsal.clinicaodontologica.clinicaodotologica.damain.dentista.Dentista;
 import com.ifscsal.clinicaodontologica.clinicaodotologica.damain.dentista.DentistaRepositery;
 import com.ifscsal.clinicaodontologica.clinicaodotologica.model.DAO.ICliente;
@@ -91,6 +92,56 @@ public class ConsultaController {
         }
 
         return ResponseEntity.status(200).body(consultasDentista);
+    }
+
+    @PutMapping ("/alterar")
+    public ResponseEntity<?> alterarConsulta (@RequestBody ConsultaUpdateDTO consulta){
+        Consulta consultaRegistro = daoConsulta.findById(consulta.getIdConsulta()).get();
+
+        if (consultaRegistro.getDentista().getId() != consulta.getIdDentista() && consulta.getIdDentista() != 0){
+            consultaRegistro.setDentista(daoDentista.getReferenceById(consulta.getIdDentista()));
+            consultaRegistro.setNomeDentista(daoDentista.findById(consulta.getIdDentista()).get().getNome());
+        }
+
+        if (consulta.getDataConsulta() != null) consultaRegistro.setDataConsulta(consulta.getDataConsulta());
+
+        if (consulta.getMotivo() != null) consultaRegistro.setMotivo(consulta.getMotivo());
+
+        daoConsulta.save(consultaRegistro);
+
+        Map <String, Object> resposta = new HashMap<>();
+        resposta.put("menssagem", "consulta alterada");
+        resposta.put("agendamento", new ConsultaDTO(consultaRegistro));
+
+        return ResponseEntity.status(200).body(resposta);
+    }
+
+    @PutMapping ("/desmarcar/{idConsulta}")
+    public ResponseEntity<?> desmarcarConsulta (@PathVariable int idConsulta){
+        Consulta consulta = daoConsulta.findById(idConsulta).get();
+
+        consulta.setEstado("cancelada");
+
+        daoConsulta.save(consulta);
+
+        Map <String, Object> resposta = new HashMap<>();
+        resposta.put("menssagem", "consulta desmarcada");
+
+        return ResponseEntity.status(200).body(resposta);
+    }
+
+    @PutMapping ("/finalizar/{idConsulta}")
+    public ResponseEntity<?> finalizarConsulta (@PathVariable int idConsulta){
+        Consulta consulta = daoConsulta.findById(idConsulta).get();
+
+        consulta.setEstado("finalizada");
+        daoConsulta.save(consulta);
+
+        Map <String, Object> resposta = new HashMap<>();
+        resposta.put("menssagem", "consulta finalizada");
+
+        return ResponseEntity.status(200).body(resposta);
+
     }
 
 }
