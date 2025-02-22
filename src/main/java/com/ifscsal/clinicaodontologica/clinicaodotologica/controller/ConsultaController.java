@@ -144,4 +144,19 @@ public class ConsultaController {
 
     }
 
+    @DeleteMapping ("/deletar/{idConsulta}")
+    public ResponseEntity<?> deletarConsulta (@PathVariable int idConsulta){
+
+        Consulta consultaDeletada = daoConsulta.findById(idConsulta).get();
+        ConsultaDTO consultaSaida =  new ConsultaDTO(consultaDeletada);
+
+        daoConsulta.delete(consultaDeletada);
+
+        Map <String, Object> resposta = new HashMap<>();
+        resposta.put("menssagem", "consulta deletada");
+        resposta.put("consulta", consultaSaida);
+
+        return ResponseEntity.status(200).body(resposta);
+    }
+
 }
