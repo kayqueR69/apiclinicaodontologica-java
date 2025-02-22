@@ -1,13 +1,13 @@
 package com.ifscsal.clinicaodontologica.clinicaodotologica.controller;
 
 import com.ifscsal.clinicaodontologica.clinicaodotologica.DTO.ClienteDTO;
-import com.ifscsal.clinicaodontologica.clinicaodotologica.model.DAO.ICliente;
+import com.ifscsal.clinicaodontologica.clinicaodotologica.model.DAO.IConsulta;
 import com.ifscsal.clinicaodontologica.clinicaodotologica.model.entidades.Cliente;
+import com.ifscsal.clinicaodontologica.clinicaodotologica.services.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,12 +16,16 @@ import java.util.Map;
 public class ClienteController {
 
     @Autowired
-    private ICliente dao;
+    private ClienteService clienteService;
+
+    @Autowired
+    private IConsulta daoConsulta;
+
 
     @PostMapping ("/cadastro")
     public ResponseEntity<Cliente> cadastroCliente (@RequestBody Cliente cliente) {
-        // adicionando cliente no banco de dados
-        Cliente novoCliente = dao.save(cliente);
+
+        Cliente novoCliente = clienteService.cadastrar(cliente);
 
         return ResponseEntity.status(201).body(novoCliente);
     }
@@ -29,13 +33,9 @@ public class ClienteController {
     @PostMapping ("/login")
     public ResponseEntity<?> loginCliente (@RequestBody ClienteDTO cliente) {
 
-        ArrayList<Cliente> clientes = (ArrayList<Cliente>) dao.findAll();
+            Map<String,Object> resposta = new HashMap<>();
 
-        Map<String, Object> resposta = new HashMap<>();
-
-        for (int c = 0; c < clientes.size(); c++) {
-
-            if (clientes.get(c).getEmail().equalsIgnoreCase(cliente.getEmail()) &&  clientes.get(c).getSenha().equals(cliente.getSenha())) {
+            if (clienteService.validacaoEmailSenha(cliente.getEmail(), cliente.getSenha()) != null) {
                 resposta.put("Menssagem", "Logado no sistema!");
 
                 return ResponseEntity.status(200).body(resposta);
@@ -45,28 +45,23 @@ public class ClienteController {
                 return ResponseEntity.status(401).body(resposta);
             }
 
-        }
-
-        resposta.put("Menssagem", "Bad request!");
-        return ResponseEntity.status(400).body(resposta);
     }
 
     @PutMapping ("/alterar")
     public ResponseEntity<?> alterarCliente (@RequestBody Cliente cliente) {
+        Map<String, Object> resposta = new HashMap<>();
 
         if (cliente.getId() == 0) { // validação para o caso onde não seja passado o id no body da requisição
-            Map<String, Object> resposta = new HashMap<>();
             resposta.put("Menssagem", "Conflito de dados");
             return ResponseEntity.status(409).body(resposta);
         }
 
-        ClienteDTO clienteSaida = new ClienteDTO();
+        ClienteDTO clienteSaida = clienteService.alterar(cliente);
 
-        Cliente clienteAlterado = dao.save(cliente);
-        clienteSaida.setNome(clienteAlterado.getNome());
-        clienteSaida.setEmail(clienteAlterado.getEmail());
-        clienteSaida.setSenha(clienteAlterado.getSenha());
+        resposta.put("Menssagem", "Alterado no sistema!");
+        resposta.put("Cliente", clienteSaida);
 
-        return ResponseEntity.status(200).body(clienteSaida);
+
+        return ResponseEntity.status(200).body(resposta);
     }
 }

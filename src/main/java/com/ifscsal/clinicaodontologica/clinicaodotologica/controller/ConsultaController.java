@@ -2,12 +2,8 @@ package com.ifscsal.clinicaodontologica.clinicaodotologica.controller;
 
 import com.ifscsal.clinicaodontologica.clinicaodotologica.DTO.ConsultaDTO;
 import com.ifscsal.clinicaodontologica.clinicaodotologica.DTO.ConsultaUpdateDTO;
-import com.ifscsal.clinicaodontologica.clinicaodotologica.damain.dentista.Dentista;
-import com.ifscsal.clinicaodontologica.clinicaodotologica.damain.dentista.DentistaRepositery;
-import com.ifscsal.clinicaodontologica.clinicaodotologica.model.DAO.ICliente;
-import com.ifscsal.clinicaodontologica.clinicaodotologica.model.DAO.IConsulta;
-import com.ifscsal.clinicaodontologica.clinicaodotologica.model.entidades.Cliente;
 import com.ifscsal.clinicaodontologica.clinicaodotologica.model.entidades.Consulta;
+import com.ifscsal.clinicaodontologica.clinicaodotologica.services.ConsultaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,28 +17,14 @@ import java.util.Map;
 public class ConsultaController {
 
     @Autowired
-    private IConsulta daoConsulta;
-
-    @Autowired
-    private ICliente daoCliente;
-
-    @Autowired
-    private DentistaRepositery daoDentista;
+    ConsultaService consultaService;
 
     @PostMapping ("/agendar")
     public ResponseEntity<?> agendarConsulta (@RequestBody Consulta consulta){
 
-        Cliente cliente =  daoCliente.findById(consulta.getCliente().getId()).get();
-        consulta.setNomePaciente(cliente.getNome());
-        consulta.setEmailPaciente(cliente.getEmail());
-        consulta.setEstado("Agendado");
+        Consulta novaConsulta = consultaService.agendar(consulta);
 
-        Dentista dentista =   daoDentista.findById(consulta.getDentista().getId()).get();
-        consulta.setNomeDentista(dentista.getNome());
-
-        Consulta novaConsulta = daoConsulta.save(consulta);
-
-        Map<Object, Object> resposta = new HashMap<Object, Object>();
+        Map<String, Object> resposta = new HashMap<>();
 
         resposta.put("menssagem", "consulta agendada");
         resposta.put("agendamento", new ConsultaDTO(novaConsulta));
@@ -53,76 +35,35 @@ public class ConsultaController {
 
     @GetMapping
     public ResponseEntity<?> getConsultas () {
-        ArrayList<Consulta> consultas = (ArrayList<Consulta>) daoConsulta.findAll();
-        ArrayList<ConsultaDTO> consultasSaida = new ArrayList<>();
-
-        for (int c = 0; c < consultas.size(); c++) {
-            consultasSaida.add(new ConsultaDTO(consultas.get(c)));
-        }
+        ArrayList<ConsultaDTO> consultasSaida = consultaService.formatBuscar();
 
         return ResponseEntity.status(200).body(consultasSaida);
     }
 
-    @GetMapping ("/cliente/{id}")
-    public ResponseEntity<?> getConsultasByCliente (@PathVariable int id){
-        ArrayList<Consulta> consultas = (ArrayList<Consulta>) daoConsulta.findAll();
-
-        ArrayList<ConsultaDTO> consultasCliente = new ArrayList<>();
-
-        for (int c = 0; c < consultas.size(); c++) {
-            if (consultas.get(c).getCliente().getId() == id) {
-                consultasCliente.add(new ConsultaDTO(consultas.get(c)));
-            }
-        }
-
-        return ResponseEntity.status(200).body(consultasCliente);
+    @GetMapping ("/cliente/{idCliente}")
+    public ResponseEntity<?> getConsultasByCliente (@PathVariable int idCliente){
+        return ResponseEntity.status(200).body(consultaService.buscarPorCliente(idCliente));
     }
 
-    @GetMapping ("/dentista/{id}")
-    public ResponseEntity<?> getConsultasByDentista (@PathVariable int id){
-
-        ArrayList<Consulta> consultas = (ArrayList<Consulta>) daoConsulta.findAll();
-
-        ArrayList<ConsultaDTO> consultasDentista = new ArrayList<>();
-
-        for (int c = 0; c < consultas.size(); c++) {
-            if (consultas.get(c).getDentista().getId() == id) {
-                consultasDentista.add(new ConsultaDTO(consultas.get(c)));
-            }
-        }
-
-        return ResponseEntity.status(200).body(consultasDentista);
+    @GetMapping ("/dentista/{idDentista}")
+    public ResponseEntity<?> getConsultasByDentista (@PathVariable int idDentista){
+        return ResponseEntity.status(200).body(consultaService.buscarPorDentista(idDentista));
     }
 
     @PutMapping ("/alterar")
     public ResponseEntity<?> alterarConsulta (@RequestBody ConsultaUpdateDTO consulta){
-        Consulta consultaRegistro = daoConsulta.findById(consulta.getIdConsulta()).get();
-
-        if (consultaRegistro.getDentista().getId() != consulta.getIdDentista() && consulta.getIdDentista() != 0){
-            consultaRegistro.setDentista(daoDentista.getReferenceById(consulta.getIdDentista()));
-            consultaRegistro.setNomeDentista(daoDentista.findById(consulta.getIdDentista()).get().getNome());
-        }
-
-        if (consulta.getDataConsulta() != null) consultaRegistro.setDataConsulta(consulta.getDataConsulta());
-
-        if (consulta.getMotivo() != null) consultaRegistro.setMotivo(consulta.getMotivo());
-
-        daoConsulta.save(consultaRegistro);
+        ConsultaDTO consultaRegistro = consultaService.alterar(consulta);
 
         Map <String, Object> resposta = new HashMap<>();
         resposta.put("menssagem", "consulta alterada");
-        resposta.put("agendamento", new ConsultaDTO(consultaRegistro));
+        resposta.put("agendamento",consultaRegistro);
 
         return ResponseEntity.status(200).body(resposta);
     }
 
     @PutMapping ("/desmarcar/{idConsulta}")
     public ResponseEntity<?> desmarcarConsulta (@PathVariable int idConsulta){
-        Consulta consulta = daoConsulta.findById(idConsulta).get();
-
-        consulta.setEstado("cancelada");
-
-        daoConsulta.save(consulta);
+        consultaService.desmarcar(idConsulta);
 
         Map <String, Object> resposta = new HashMap<>();
         resposta.put("menssagem", "consulta desmarcada");
@@ -132,10 +73,7 @@ public class ConsultaController {
 
     @PutMapping ("/finalizar/{idConsulta}")
     public ResponseEntity<?> finalizarConsulta (@PathVariable int idConsulta){
-        Consulta consulta = daoConsulta.findById(idConsulta).get();
-
-        consulta.setEstado("finalizada");
-        daoConsulta.save(consulta);
+        consultaService.finalizar(idConsulta);
 
         Map <String, Object> resposta = new HashMap<>();
         resposta.put("menssagem", "consulta finalizada");
@@ -147,10 +85,7 @@ public class ConsultaController {
     @DeleteMapping ("/deletar/{idConsulta}")
     public ResponseEntity<?> deletarConsulta (@PathVariable int idConsulta){
 
-        Consulta consultaDeletada = daoConsulta.findById(idConsulta).get();
-        ConsultaDTO consultaSaida =  new ConsultaDTO(consultaDeletada);
-
-        daoConsulta.delete(consultaDeletada);
+        ConsultaDTO consultaSaida = consultaService.deletar(idConsulta);
 
         Map <String, Object> resposta = new HashMap<>();
         resposta.put("menssagem", "consulta deletada");

@@ -1,6 +1,7 @@
 package com.ifscsal.clinicaodontologica.clinicaodotologica.model.entidades;
 
 import com.ifscsal.clinicaodontologica.clinicaodotologica.damain.dentista.Dentista;
+import com.ifscsal.clinicaodontologica.clinicaodotologica.observer.Observer;
 import jakarta.persistence.*;
 
 import java.util.Date;
