@@ -20,7 +20,7 @@ public class ConsultaController {
     ConsultaService consultaService;
 
     @PostMapping ("/agendar")
-    public ResponseEntity<?> agendarConsulta (@RequestBody Consulta consulta){
+    public ResponseEntity<?> agendarConsulta (@RequestBody ConsultaDTO consulta){
 
         Consulta novaConsulta = consultaService.agendar(consulta);
 

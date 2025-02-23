@@ -26,17 +26,27 @@ public class ConsultaService implements Observer {
     @Autowired
     private DentistaRepositery daoDentista;
 
-    public Consulta agendar (Consulta consulta){
+    public Consulta agendar (ConsultaDTO consulta){
 
-        Cliente cliente =  daoCliente.findById(consulta.getCliente().getId()).get();
+        Cliente cliente =  daoCliente.findById(consulta.getIdCliente()).get();
         consulta.setNomePaciente(cliente.getNome());
         consulta.setEmailPaciente(cliente.getEmail());
         consulta.setEstado("Agendado");
 
-        Dentista dentista =   daoDentista.findById(consulta.getDentista().getId()).get();
+        Dentista dentista = daoDentista.findById(consulta.getIdDentista()).get();
         consulta.setNomeDentista(dentista.getNome());
 
-        Consulta novaConsulta = dao.save(consulta);
+        Consulta novaConsulta = new Consulta();
+        novaConsulta.setCliente(cliente);
+        novaConsulta.setDentista(dentista);
+        novaConsulta.setDataConsulta(consulta.getDataConsulta());
+        novaConsulta.setMotivo(consulta.getMotivo());
+        novaConsulta.setEstado(consulta.getEstado());
+        novaConsulta.setNomePaciente(consulta.getNomePaciente());
+        novaConsulta.setEmailPaciente(consulta.getEmailPaciente());
+        novaConsulta.setNomeDentista(consulta.getNomeDentista());
+
+        dao.save(novaConsulta);
 
         return novaConsulta;
 
@@ -64,7 +74,7 @@ public class ConsultaService implements Observer {
         ArrayList<ConsultaDTO> consultasCliente = new ArrayList<>();
 
         for (int c = 0; c < consultas.size(); c++) {
-            if (consultas.get(c).getCliente().getId() == idCliente) {
+            if (consultas.get(c).getCliente() != null && consultas.get(c).getCliente().getId() == idCliente) {
                 consultasCliente.add(new ConsultaDTO(consultas.get(c)));
             }
         }
@@ -79,7 +89,7 @@ public class ConsultaService implements Observer {
         ArrayList<ConsultaDTO> consultasDentista = new ArrayList<>();
 
         for (int c = 0; c < consultas.size(); c++) {
-            if (consultas.get(c).getDentista().getId() == idDentista) {
+            if (consultas.get(c).getDentista() != null && consultas.get(c).getDentista().getId() == idDentista) {
                 consultasDentista.add(new ConsultaDTO(consultas.get(c)));
             }
         }
@@ -131,15 +141,20 @@ public class ConsultaService implements Observer {
 
     @Override
     public void update(Cliente cliente, Consulta consulta) {
+
         if (!cliente.getNome().equals(consulta.getNomePaciente())) consulta.setNomePaciente(cliente.getNome());
         if (!cliente.getEmail().equals(consulta.getEmailPaciente())) consulta.setEmailPaciente(cliente.getEmail());
         System.out.println(consulta.getNomePaciente());
         dao.save(consulta);
+
     }
 
     @Override
     public void desmarcar(Consulta consulta) {
+        consulta.setCliente(null);
         consulta.setEstado("cancelada");
+        consulta.setNomePaciente("cadastro deletado");
+        consulta.setEmailPaciente("");
         dao.save(consulta);
     }
 }

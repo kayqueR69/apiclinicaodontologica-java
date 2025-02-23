@@ -20,26 +20,14 @@ public class ConsultaDTO {
 
     public ConsultaDTO (Consulta consulta) {
         this.idConsulta = consulta.getIdConsulta();
-        this.idCliente = consulta.getCliente().getId();
-        this.idDentista = consulta.getDentista().getId();
+        if (consulta.getCliente() != null) this.idCliente = consulta.getCliente().getId();
+        if (consulta.getDentista() != null) this.idDentista = consulta.getDentista().getId();
         this.dataConsulta = consulta.getDataConsulta();
         this.motivo = consulta.getMotivo();
         this.estado = consulta.getEstado();
         this.nomePaciente = consulta.getNomePaciente();
         this.emailPaciente = consulta.getEmailPaciente();
         this.nomeDentista = consulta.getNomeDentista();
-    }
-
-    public ConsultaDTO(int idConsulta, int idCliente, int idDentista, Date dataConsulta, String motivo, String estado, String nomePaciente, String emailPaciente, String nomeDentista) {
-        this.idConsulta = idConsulta;
-        this.idCliente = idCliente;
-        this.idDentista = idDentista;
-        this.dataConsulta = dataConsulta;
-        this.motivo = motivo;
-        this.estado = estado;
-        this.nomePaciente = nomePaciente;
-        this.emailPaciente = emailPaciente;
-        this.nomeDentista = nomeDentista;
     }
 
     public int getIdConsulta() {

@@ -14,6 +14,10 @@ public class ClienteDTO {
         this.senha = cliente.getSenha();
     }
 
+    public ClienteDTO () {
+
+    }
+
     public String getEmail() {
         return email;
     }

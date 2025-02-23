@@ -1,8 +1,11 @@
 package com.ifscsal.clinicaodontologica.clinicaodotologica.model.entidades;
 
+import com.ifscsal.clinicaodontologica.clinicaodotologica.DTO.ConsultaDTO;
 import com.ifscsal.clinicaodontologica.clinicaodotologica.damain.dentista.Dentista;
 import com.ifscsal.clinicaodontologica.clinicaodotologica.observer.Observer;
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.Date;
 
@@ -17,11 +20,13 @@ public class Consulta {
     private int idConsulta;
 
     @ManyToOne
-    @JoinColumn (name = "idCliente", referencedColumnName = "id")
+    @JoinColumn(name = "idCliente", referencedColumnName = "id")
+    @OnDelete (action = OnDeleteAction.SET_NULL)
     private Cliente cliente;
 
     @ManyToOne
     @JoinColumn (name = "idDentista", referencedColumnName = "id")
+    @OnDelete (action = OnDeleteAction.SET_NULL)
     private Dentista dentista;
 
     @Column (name = "dataConsulta")

@@ -65,7 +65,7 @@ public class ClienteController {
         return ResponseEntity.status(200).body(resposta);
     }
 
-    @DeleteMapping ("/cliente/deletar/{id}")
+    @DeleteMapping ("/deletar/{id}")
     public ResponseEntity<?> deletarCliente (@PathVariable int id) {
         Cliente clienteDelete = clienteService.deletar(id);
 

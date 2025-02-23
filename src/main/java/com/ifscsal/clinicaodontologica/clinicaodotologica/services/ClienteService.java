@@ -32,7 +32,7 @@ public class ClienteService implements Observable {
         ArrayList<Consulta> consultasCliente = consultaService.buscar();
 
         for (int c = 0; c < consultasCliente.size(); c++) {
-            if (consultasCliente.get(c).getCliente().getId() == id) {
+            if (consultasCliente.get(c).getCliente() != null && consultasCliente.get(c).getCliente().getId() == id) {
                 consultas.add(consultasCliente.get(c));
             }
         }
@@ -50,16 +50,13 @@ public class ClienteService implements Observable {
         }
     }
 
-    public  ClienteService(ICliente daoCliente) {
-        this.dao = daoCliente;
-    }
-
     public Cliente cadastrar (Cliente cliente) {
         Cliente novoCliente = dao.save(cliente);
         return novoCliente;
     }
 
     public Cliente validacaoEmailSenha(String email, String senha) {
+
         ArrayList<Cliente> clientes = (ArrayList<Cliente>) dao.findAll();
 
         for (int c = 0; c < clientes.size(); c++) {
@@ -97,9 +94,12 @@ public class ClienteService implements Observable {
 
         Cliente clienteDeletado = dao.findById(id).get();
 
-        dao.delete(clienteDeletado);
+        System.out.println(clienteDeletado.getNome());
 
+        addObservers(id);
         notificarObservers("cancelar", clienteDeletado);
+
+        dao.delete(clienteDeletado);
 
         return clienteDeletado;
 
