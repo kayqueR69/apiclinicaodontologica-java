@@ -24,9 +24,21 @@ public class DentistaController {
         return ResponseEntity.ok(dentistas);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity getDentistaResponseEntity(@PathVariable int id) {
+        var dentista = dentistaRepositery.findById(id);
+        return ResponseEntity.ok(dentista);
+    }
+
     @PostMapping("/cadastro")
     public ResponseEntity cadastrarDentista(@RequestBody @Valid DentistaDTO dentista) {
-        Dentista newDentista = new Dentista(dentista);
+        Dentista newDentista = new Dentista.DentistaBuilder()
+                .cro(dentista.CRO())
+                .nome(dentista.nome())
+                .email(dentista.email())
+                .especialidade(dentista.especialidade())
+                .senha(dentista.senha())
+                .build();
         dentistaRepositery.save(newDentista);
         return ResponseEntity.ok().build();
     }
@@ -54,9 +66,7 @@ public class DentistaController {
     @PutMapping
     public ResponseEntity alterarDentista(@RequestBody @Valid DentistaDTO dentista) {
 
-        if(dentistaRepositery.findById(dentista.id()) == null) {
-            return ResponseEntity.status(404).build();
-        }
+        if(dentistaRepositery.findById(dentista.id()) == null) return ResponseEntity.status(404).build();
 
         Dentista dentistaAlterado = dentistaRepositery.getReferenceById(dentista.id());
 
