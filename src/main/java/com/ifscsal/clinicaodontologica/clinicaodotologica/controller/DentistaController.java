@@ -33,7 +33,7 @@ public class DentistaController {
     @PostMapping("/cadastro")
     public ResponseEntity cadastrarDentista(@RequestBody @Valid DentistaDTO dentista) {
         Dentista newDentista = new Dentista.DentistaBuilder()
-                .cro(dentista.CRO())
+                .cro(dentista.cro())
                 .nome(dentista.nome())
                 .email(dentista.email())
                 .especialidade(dentista.especialidade())
@@ -82,8 +82,8 @@ public class DentistaController {
         if(dentista.email() != null) {
             dentistaAlterado.setEmail(dentista.email());
         }
-        if(dentista.CRO() != null) {
-            dentistaAlterado.setCRO(dentista.CRO());
+        if(dentista.cro() != null) {
+            dentistaAlterado.setCro(dentista.cro());
         }
 
         dentistaRepositery.save(dentistaAlterado);

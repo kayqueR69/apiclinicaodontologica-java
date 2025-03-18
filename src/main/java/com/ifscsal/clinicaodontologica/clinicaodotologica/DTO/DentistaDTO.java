@@ -10,6 +10,6 @@ public record DentistaDTO(
         @NotBlank String especialidade,
         @NotNull @NotBlank @Column(unique = true) String email,
         @NotNull String senha,
-        @NotNull String CRO) {
+        @NotNull String cro) {
 }
 

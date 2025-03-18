@@ -30,22 +30,22 @@ public class Dentista{
     private String senha;
 
     @Column(name = "cro", length = 50)
-    private String CRO;
+    private String cro;
 
-//    public Dentista(DentistaDTO dentistaDTO) {
-//        this.nome = dentistaDTO.nome();
-//        this.email = dentistaDTO.email();
-//        this.especialidade = dentistaDTO.especialidade();
-//        this.senha = dentistaDTO.senha();
-//        this.CRO = dentistaDTO.CRO();
-//    }
+    public Dentista(DentistaDTO dentistaDTO) {
+        this.nome = dentistaDTO.nome();
+        this.email = dentistaDTO.email();
+        this.especialidade = dentistaDTO.especialidade();
+        this.senha = dentistaDTO.senha();
+        this.cro = dentistaDTO.cro();
+    }
 
-    private Dentista(String nome, String email, String especialidade, String senha, String CRO) {
+    private Dentista(String nome, String email, String especialidade, String senha, String cro) {
         this.nome = nome;
         this.email = email;
         this.especialidade = especialidade;
         this.senha = senha;
-        this.CRO = CRO;
+        this.cro = cro;
     }
 
     public static class DentistaBuilder{
@@ -54,7 +54,7 @@ public class Dentista{
         private String email;
         private String especialidade;
         private String senha;
-        private String CRO;
+        private String cro;
 
         public DentistaBuilder nome(String nome) {
             this.nome = nome;
@@ -77,12 +77,12 @@ public class Dentista{
         }
 
         public DentistaBuilder cro(String cro) {
-            this.CRO = cro;
+            this.cro = cro;
             return this;
         }
 
         public Dentista build() {
-            return new Dentista(nome, email, especialidade, senha, CRO);
+            return new Dentista(nome, email, especialidade, senha, cro);
         }
     }
 }
