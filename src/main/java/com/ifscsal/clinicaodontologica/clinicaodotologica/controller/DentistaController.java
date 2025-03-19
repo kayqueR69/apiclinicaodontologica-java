@@ -92,6 +92,15 @@ public class DentistaController {
         return ResponseEntity.status(205).build();
     }
 
+    @PutMapping("/recuperarConta")
+    public ResponseEntity recuperarConta(@RequestBody @Valid DentistaDTO dentista) {
+        Dentista dentistaRecuperar = dentistaRepositery.getReferenceById(dentista.id());
+
+        dentistaRecuperar.setAtivo(true);
+        dentistaRepositery.save(dentistaRecuperar);
+        return ResponseEntity.ok().build();
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity deletarDentista(@PathVariable int id) {
         Optional<Dentista> dentista = dentistaRepositery.findByIdAndAtivoTrue(id);
@@ -105,4 +114,6 @@ public class DentistaController {
 
         return ResponseEntity.noContent().build();
     }
+
+
 }
