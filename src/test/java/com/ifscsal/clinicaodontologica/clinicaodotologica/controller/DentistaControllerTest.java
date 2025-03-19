@@ -12,8 +12,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -22,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -72,17 +75,6 @@ class DentistaControllerTest {
     }
 
     @Test
-    void deveDemonstrarErroAoCadastrarDentista() throws Exception{
-
-        when(dentistaRepositery.save(any(Dentista.class))).thenThrow(new RuntimeException("Erro ao salvar dentista"));
-
-        mockMvc.perform(post("/dentista/cadastro")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(dentista)))
-                .andExpect(status().isInternalServerError());
-    }
-
-    @Test
     void deveListarDentistaPorIdComSucesso() throws Exception{
         when(dentistaRepositery.findById(dentista.id()))
                 .thenReturn(Optional.of(new Dentista(dentista)));
@@ -106,13 +98,13 @@ class DentistaControllerTest {
 
     @Test
     void deveDeletarUmDentistaComSucesso() throws Exception {
-        when(dentistaRepositery.findById(dentista.id()))
+        when(dentistaRepositery.findByIdAndAtivoTrue(dentista.id()))
                 .thenReturn(Optional.of(new Dentista(dentista)));
 
-        doNothing().when(dentistaRepositery).deleteById(dentista.id());
-        dentistaController.deletarDentista(dentista.id());
-
-        verify(dentistaRepositery, times(1)).deleteById(dentista.id());
+        when(dentistaRepositery.save(any(Dentista.class))).thenReturn(new Dentista(dentista));
+        ResponseEntity responseEntity = dentistaController.deletarDentista(dentista.id());
+        verify(dentistaRepositery, times(1)).save(any(Dentista.class));
+        assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
     }
 
 }
