@@ -32,6 +32,9 @@ public class Dentista{
     @Column(name = "cro", length = 50)
     private String cro;
 
+    @Column(name = "ativo")
+    private boolean ativo;
+
     public Dentista(DentistaDTO dentistaDTO) {
         this.nome = dentistaDTO.nome();
         this.email = dentistaDTO.email();
@@ -46,6 +49,7 @@ public class Dentista{
         this.especialidade = especialidade;
         this.senha = senha;
         this.cro = cro;
+        this.ativo = true;
     }
 
     public static class DentistaBuilder{
