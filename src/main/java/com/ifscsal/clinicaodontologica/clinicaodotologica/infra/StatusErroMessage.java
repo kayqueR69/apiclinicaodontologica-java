@@ -1,0 +1,14 @@
+package com.ifscsal.clinicaodontologica.clinicaodotologica.infra;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.http.HttpStatus;
+
+@AllArgsConstructor
+@Getter
+@Setter
+public class StatusErroMessage {
+    private HttpStatus status;
+    private String Message;
+}
